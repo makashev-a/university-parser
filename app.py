@@ -1,4 +1,5 @@
 import csv
+import itertools
 import os
 import re
 
@@ -41,10 +42,19 @@ def get_content(html):
             price = ' '.join(price)
         else:
             price = 'Цену уточняйте'
+        specialties = item.find_all('a', class_='university__number-flex')
+        spec_lst = []
+        for specialty in specialties:
+            specialty = specialty.text
+            specialty = re.findall(r'\d+', specialty)
+            spec_lst.append(specialty)
+        spec_lst = list(itertools.chain(*spec_lst))
+        spec_lst = sum(list(map(int, spec_lst)))
         universities_list.append({
             'title': title,
             'link': link,
-            'price': price
+            'price': price,
+            'specialty': spec_lst
         })
     return universities_list
 
@@ -53,9 +63,9 @@ def save_file(items, path):
     with open(path, 'w', newline='') as file:
         writer = csv.writer(file, delimiter=';')
         writer.writerow(
-            ['id', 'Наименование', 'Ссылка', 'Цена за год обучения'])
+            ['Наименование', 'Ссылка', 'Цена за год обучения', 'Кол-во специальностей'])
         for item in items:
-            writer.writerow([item['title'], item['link'], item['price']])
+            writer.writerow([item['title'], item['link'], item['price'], item['specialty']])
 
 
 universities = []
