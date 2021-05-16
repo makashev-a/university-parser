@@ -30,7 +30,6 @@ def get_html(url, params=None):
 def get_content(html):
     soup = BeautifulSoup(html, 'html.parser')
     items = soup.find_all('body')
-
     universities_list = []
     for item in items:
         title = item.find('div', class_='university__info--title').get_text(strip=True)
@@ -63,9 +62,9 @@ def save_file(items, path):
     with open(path, 'w', newline='') as file:
         writer = csv.writer(file, delimiter=';')
         writer.writerow(
-            ['Наименование', 'Ссылка', 'Цена за год обучения', 'Кол-во специальностей'])
-        for item in items:
-            writer.writerow([item['title'], item['link'], item['price'], item['specialty']])
+            ['id', 'Наименование', 'Ссылка', 'Цена за год обучения', 'Кол-во специальностей'])
+        for index, item in enumerate(items, start=1):
+            writer.writerow([index, item['title'], item['link'], item['price'], item['specialty']])
 
 
 universities = []
