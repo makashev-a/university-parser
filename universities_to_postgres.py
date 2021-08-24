@@ -19,7 +19,9 @@ try:
         student_number varchar,
         foreign_number varchar,
         teacher_number varchar,
-        year_of_foundation varchar
+        year_of_foundation varchar,
+        address varchar,
+        email varchar
         )
          """)
 
@@ -29,10 +31,12 @@ try:
 
         with open(FILE, 'r') as data:
             next(data)
-            cur.copy_from(data, 'universities_staging', sep=';', columns=('id', 'title', 'link', 'price', 'specialty', 'student_number', 'foreign_number', 'teacher_number', 'year_of_foundation'))
+            cur.copy_from(data, 'universities_staging', sep=';', columns=(
+                'id', 'title', 'link', 'price', 'specialty', 'student_number', 'foreign_number', 'teacher_number',
+                'year_of_foundation', 'address', 'email'))
 
-        cur.execute("""INSERT INTO universities ( id, title, link, price, specialty, student_number, foreign_number, teacher_number, year_of_foundation)
-                               SELECT id, title, link, price, specialty, student_number, foreign_number, teacher_number, year_of_foundation
+        cur.execute("""INSERT INTO universities ( id, title, link, price, specialty, student_number, foreign_number, teacher_number, year_of_foundation, address, email)
+                               SELECT id, title, link, price, specialty, student_number, foreign_number, teacher_number, year_of_foundation, address, email
                                FROM universities_staging
                                ON CONFLICT ( id )
                                DO UPDATE SET title = EXCLUDED.title
@@ -42,7 +46,9 @@ try:
                                            , student_number = EXCLUDED.student_number
                                            , foreign_number = EXCLUDED.foreign_number
                                            , teacher_number = EXCLUDED.teacher_number
-                                           , year_of_foundation = EXCLUDED.year_of_foundation""")
+                                           , year_of_foundation = EXCLUDED.year_of_foundation
+                                           , address = EXCLUDED.address
+                                           , email = EXCLUDED.email""")
 
 except:
     conn.rollback()

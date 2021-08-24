@@ -52,6 +52,9 @@ def get_content(html):
         foreign_number = details_list[1]
         teacher_number = details_list[2]
         year_of_foundation = details_list[3]
+        address = re.sub('Фактический адрес:', '',
+                         item.find('div', class_='uni-contact__left--adres').get_text()).strip()
+        email = item.find_all('div', class_='uni-contact__left--email')[1].find('a').get_text(strip=True)
 
         if re.search('[0-9]', price):
             price = price
@@ -75,7 +78,9 @@ def get_content(html):
             'student_number': student_number,
             'foreign_number': foreign_number,
             'teacher_number': teacher_number,
-            'year_of_foundation': year_of_foundation
+            'year_of_foundation': year_of_foundation,
+            'address': address,
+            'email': email
         })
     return universities_list
 
@@ -83,10 +88,33 @@ def get_content(html):
 def save_file(items, path):
     with open(path, 'w', newline='') as file:
         writer = csv.writer(file, delimiter=';')
-        writer.writerow(
-            ['id', 'title', 'link', 'price', 'specialty', 'student_number', 'foreign_number', 'teacher_number', 'year_of_foundation'])
+        writer.writerow([
+            'id',
+            'title',
+            'link',
+            'price',
+            'specialty',
+            'student_number',
+            'foreign_number',
+            'teacher_number',
+            'year_of_foundation',
+            'address',
+            'email'
+        ])
         for index, item in enumerate(items, start=1):
-            writer.writerow([index, item['title'], item['link'], item['price'], item['specialty'], item['student_number'], item['foreign_number'], item['teacher_number'], item['year_of_foundation']])
+            writer.writerow([
+                index,
+                item['title'],
+                item['link'],
+                item['price'],
+                item['specialty'],
+                item['student_number'],
+                item['foreign_number'],
+                item['teacher_number'],
+                item['year_of_foundation'],
+                item['address'],
+                item['email']
+            ])
 
 
 universities = []
